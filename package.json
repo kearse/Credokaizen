@@ -20,6 +20,7 @@
   "devDependencies": {
     "typescript": "^5.4.0",
     "@types/react": "^18.2.74",
+    "@types/react-dom": "^18.2.74",
     "@types/node": "^20.11.30",
     "tsx": "^4.7.0"
   }
