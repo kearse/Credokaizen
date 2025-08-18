@@ -39,14 +39,16 @@ Most SiteGround / GoDaddy shared plans → Mode A.
 git clone https://github.com/YOUR_FORK/Credokaizen.git
 cd Credokaizen
 
-# Optional: Set up local DB only if you need to change data via Prisma
-cp .env.example .env.local
-# Edit DATABASE_URL if using MySQL locally (or skip if editing JSON directly)
-
 npm install
+npm run export        # Builds static site into /out
+```
+
+**Optional:** If you want to use the legacy Prisma workflow:
+```bash
+cp .env.example .env.local
+# Edit DATABASE_URL for your MySQL database
 npm run prisma:push   # Only if using a DB
 npm run seed          # Optional sample data
-npm run export        # Builds static site into /out
 ```
 
 Upload the contents of `out/` (NOT the folder itself) into your hosting document root (often `public_html/`).
@@ -59,12 +61,19 @@ Done.
 
 1. Install Node.js ≥ 18 (LTS recommended).
 2. Fork or clone the repository.
-3. (Optional) Install MySQL locally if you want to manage structured data via Prisma:
+3. Run:
+   ```bash
+   npm install
+   npm run export
+   ```
+4. Modify or add companies in `src/data/companies.json` (see Section 7).
+
+**Optional Prisma Setup (Legacy):**
+3. Install MySQL locally if you want to manage structured data via Prisma:
    - Create DB: `CREATE DATABASE credokaizen_dev CHARACTER SET utf8mb4;`
    - Set `.env.local` with `DATABASE_URL="mysql://user:pass@localhost:3306/credokaizen_dev"`
 4. Run:
    ```bash
-   npm install
    npm run prisma:push
    npm run seed
    ```
@@ -72,7 +81,6 @@ Done.
    ```bash
    npm run dev
    ```
-6. Modify or add companies/products (see Section 7).
 
 ---
 
@@ -84,9 +92,9 @@ npm run export
 ```
 
 Behind the scenes this runs (order may vary based on your package.json):
-1. `generate:data` – Exports DB snapshot to `src/data/companies.json`.
-2. `generate:sitemap` – Creates `public/sitemap.xml`.
-3. `generate:og` – Generates OpenGraph PNGs into `public/og/`.
+1. `validate:data` – Validates companies.json data structure and reports errors/warnings using tsx.
+2. `generate:sitemap` – Creates `public/sitemap.xml` using tsx.
+3. `generate:og` – Generates OpenGraph PNGs into `public/og/` using tsx.
 4. `next build` – Builds production assets.
 5. `next export` – Writes static site to `/out`.
 
@@ -110,17 +118,21 @@ Upload ALL files from `/out` (index.html + subfolders). Do not include the `out`
 
 ## 7. Updating Company / Product Data
 
-You have two approaches:
+**Current Approach: JSON-Only (Recommended)**
 
-### Approach A: Edit JSON Directly
 1. Open `src/data/companies.json`.
 2. Add / modify company objects.
 3. Save and run `npm run export`.
 
-Pros: Simple, no DB required.
-Cons: No schema validation beyond TypeScript hints.
+Pros: Simple, no DB required, fast workflow.
+Cons: No schema validation beyond TypeScript hints and optional JSON Schema.
 
-### Approach B: Prisma + MySQL Workflow
+**JSON Schema Support:** A `companies.schema.json` file is available for editor validation in VS Code and other IDEs that support JSON Schema. This provides real-time validation and autocompletion when editing `companies.json`.
+
+### Legacy Approach: Prisma + MySQL Workflow (Optional)
+
+*Note: This approach is maintained for backwards compatibility but not required for the current workflow.*
+
 1. Edit `prisma/schema.prisma` if you need new fields.
 2. `npm run prisma:push` to sync local DB.
 3. Add/update seed logic in `scripts/seed.ts` or manually use a DB client.
@@ -163,7 +175,7 @@ Important:
 
 ## 9. Regenerating OpenGraph Images
 
-The script scans `src/data/companies.json` and outputs PNGs:
+The tsx script scans `src/data/companies.json` and outputs PNGs:
 ```
 public/og/{slug}.png
 ```
@@ -174,7 +186,7 @@ rm -rf public/og/*.png
 npm run generate:og
 ```
 
-If a company has no tagline/shortDescription, script uses fallback text.
+The script uses tsx for cross-platform execution and generates images with company branding. If a company has no tagline/shortDescription, the script uses fallback text.
 
 ---
 

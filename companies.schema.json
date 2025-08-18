@@ -1,0 +1,69 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Companies Data Schema",
+  "description": "JSON Schema for validating companies.json data structure",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "required": ["id", "slug", "name", "status"],
+    "properties": {
+      "id": {
+        "type": "integer",
+        "description": "Unique identifier for the company",
+        "minimum": 1
+      },
+      "slug": {
+        "type": "string",
+        "description": "URL-friendly unique identifier",
+        "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+        "minLength": 1
+      },
+      "name": {
+        "type": "string",
+        "description": "Company display name",
+        "minLength": 1
+      },
+      "status": {
+        "type": "string",
+        "description": "Current company status",
+        "enum": ["ACTIVE", "INCUBATION", "RETIRED", "EXITED"]
+      },
+      "tagline": {
+        "type": "string",
+        "description": "Short company tagline",
+        "maxLength": 200
+      },
+      "shortDescription": {
+        "type": "string",
+        "description": "Brief company description",
+        "maxLength": 500
+      },
+      "longDescription": {
+        "type": "string",
+        "description": "Detailed company description"
+      },
+      "websiteUrl": {
+        "type": "string",
+        "format": "uri",
+        "description": "Company website URL"
+      },
+      "logoUrl": {
+        "type": "string",
+        "description": "Path to company logo"
+      },
+      "primaryColor": {
+        "type": "string",
+        "pattern": "^#[0-9A-Fa-f]{6}$",
+        "description": "Primary brand color in hex format"
+      },
+      "products": {
+        "type": "array",
+        "description": "Array of company products",
+        "items": {
+          "type": "object"
+        }
+      }
+    },
+    "additionalProperties": true
+  }
+}

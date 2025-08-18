@@ -1,0 +1,28 @@
+[
+  {
+    "id": 1,
+    "slug": "credo-ventures",
+    "name": "Credo Ventures",
+    "status": "ACTIVE",
+    "tagline": "Leading early-stage VC in Central Europe.",
+    "shortDescription": "Building the future of CEE startups.",
+    "longDescription": "Credo Ventures is the leading early-stage venture capital fund in Central and Eastern Europe. We back exceptional founders building category-defining companies.",
+    "websiteUrl": "https://credoventures.com",
+    "logoUrl": "/logos/credo.svg",
+    "primaryColor": "#2563EB",
+    "products": []
+  },
+  {
+    "id": 2,
+    "slug": "sample-company",
+    "name": "Sample Company",
+    "status": "INCUBATION",
+    "tagline": "Innovation in action.",
+    "shortDescription": "Sample description for testing.",
+    "longDescription": "This is a sample company entry for testing the validation and generation scripts.",
+    "websiteUrl": "https://example.com",
+    "logoUrl": "/logos/sample.svg",
+    "primaryColor": "#10B981",
+    "products": []
+  }
+]

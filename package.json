@@ -1,31 +1,26 @@
 {
-  "name": "credokaizen-website",
-  "version": "0.1.0",
+  "name": "credokaizen",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start",
-    "lint": "next lint"
+    "validate:data": "tsx scripts/validate-data.ts",
+    "generate:sitemap": "tsx scripts/generate-sitemap.ts",
+    "generate:og": "tsx scripts/generate-og.ts",
+    "export": "npm run validate:data && npm run generate:sitemap && npm run generate:og && next build && next export"
   },
   "dependencies": {
-    "clsx": "^2.1.1",
-    "framer-motion": "^11.1.7",
-    "next": "14.2.3",
-    "react": "^18",
-    "react-dom": "^18"
-    /* If you decide to add DB driver directly:
-    , "mysql2": "^3.9.7"
-    */
+    "next": "14.2.5",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "satori": "^0.10.12",
+    "@resvg/resvg-js": "^2.6.2"
   },
   "devDependencies": {
-    "@types/node": "^20",
-    "@types/react": "^18",
-    "@types/react-dom": "^18",
-    "eslint": "^8",
-    "eslint-config-next": "14.2.3",
-    "postcss": "^8",
-    "tailwindcss": "^3.4.1",
-    "typescript": "^5"
+    "typescript": "^5.4.0",
+    "@types/react": "^18.2.74",
+    "@types/node": "^20.11.30",
+    "tsx": "^4.7.0"
   }
 }
