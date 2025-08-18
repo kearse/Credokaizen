@@ -14,9 +14,6 @@
     "next": "14.2.3",
     "react": "^18",
     "react-dom": "^18"
-    /* If you decide to add DB driver directly:
-    , "mysql2": "^3.9.7"
-    */
   },
   "devDependencies": {
     "@types/node": "^20",
