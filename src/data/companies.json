@@ -1,0 +1,80 @@
+[
+  {
+    "id": "ai-assistant",
+    "name": "AI Assistant Pro",
+    "slug": "ai-assistant",
+    "shortDescription": "Intelligent AI-powered virtual assistant for businesses",
+    "tagline": "Your smart business companion",
+    "description": "AI Assistant Pro is a cutting-edge artificial intelligence platform that helps businesses automate customer service, manage workflows, and boost productivity through intelligent automation and natural language processing.",
+    "status": "active",
+    "category": "AI & Automation",
+    "foundedYear": 2022,
+    "website": "https://ai-assistant-pro.com",
+    "featured": true
+  },
+  {
+    "id": "eco-tracker",
+    "name": "EcoTracker",
+    "slug": "eco-tracker",
+    "shortDescription": "Sustainability monitoring and carbon footprint tracking",
+    "tagline": "Track, reduce, and offset your environmental impact",
+    "description": "EcoTracker is a comprehensive sustainability platform that helps organizations monitor their environmental impact, track carbon emissions, and implement effective green initiatives through data-driven insights and actionable recommendations.",
+    "status": "active",
+    "category": "Sustainability",
+    "foundedYear": 2023,
+    "website": "https://eco-tracker.app",
+    "featured": true
+  },
+  {
+    "id": "fintech-hub",
+    "name": "FinTech Hub",
+    "slug": "fintech-hub",
+    "shortDescription": "Next-generation digital banking and payment solutions",
+    "tagline": "Banking reimagined for the digital age",
+    "description": "FinTech Hub provides innovative digital banking solutions, seamless payment processing, and advanced financial analytics to help businesses and individuals manage their finances more effectively in the modern economy.",
+    "status": "active",
+    "category": "FinTech",
+    "foundedYear": 2021,
+    "website": "https://fintech-hub.io",
+    "featured": true
+  },
+  {
+    "id": "health-connect",
+    "name": "HealthConnect",
+    "slug": "health-connect",
+    "shortDescription": "Telemedicine and digital health platform",
+    "tagline": "Healthcare that connects",
+    "description": "HealthConnect is a comprehensive telemedicine platform that bridges the gap between patients and healthcare providers, offering secure video consultations, digital health records, and AI-powered health monitoring.",
+    "status": "incubation",
+    "category": "HealthTech",
+    "foundedYear": 2023,
+    "website": "https://health-connect.care",
+    "featured": false
+  },
+  {
+    "id": "smart-logistics",
+    "name": "SmartLogistics",
+    "slug": "smart-logistics",
+    "shortDescription": "AI-driven supply chain and logistics optimization",
+    "tagline": "Intelligent logistics for a connected world",
+    "description": "SmartLogistics leverages artificial intelligence and IoT technology to optimize supply chain operations, reduce costs, and improve delivery efficiency for businesses of all sizes.",
+    "status": "active",
+    "category": "Logistics",
+    "foundedYear": 2022,
+    "website": "https://smart-logistics.tech",
+    "featured": false
+  },
+  {
+    "id": "edu-platform",
+    "name": "EduPlatform",
+    "slug": "edu-platform",
+    "shortDescription": "Interactive online learning and skill development",
+    "tagline": "Learn, grow, and succeed",
+    "description": "EduPlatform is an innovative online learning platform that combines interactive content, AI-powered personalization, and real-world project-based learning to help students and professionals develop in-demand skills.",
+    "status": "exited",
+    "category": "EdTech",
+    "foundedYear": 2020,
+    "website": "https://edu-platform.com",
+    "featured": false
+  }
+]

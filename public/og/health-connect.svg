@@ -1,0 +1,18 @@
+<svg width="1200" height="630" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" style="stop-color:#667eea;stop-opacity:1" />
+              <stop offset="100%" style="stop-color:#764ba2;stop-opacity:1" />
+            </linearGradient>
+          </defs>
+          <rect width="100%" height="100%" fill="url(#grad)"/>
+          <rect x="100" y="100" width="1000" height="430" rx="24" fill="rgba(255,255,255,0.95)" stroke="none"/>
+          <text x="600" y="200" font-family="Arial, sans-serif" font-size="60" font-weight="bold" text-anchor="middle" fill="#1f2937">HealthConnect</text>
+          <text x="600" y="260" font-family="Arial, sans-serif" font-size="28" text-anchor="middle" fill="#6b7280" font-style="italic">Healthcare that connects</text>
+          <rect x="450" y="300" width="120" height="40" rx="20" fill="#f59e0b"/>
+          <text x="510" y="325" font-family="Arial, sans-serif" font-size="16" font-weight="600" text-anchor="middle" fill="white">In Incubation</text>
+          <rect x="580" y="300" width="120" height="40" rx="12" fill="#f3f4f6"/>
+          <text x="640" y="325" font-family="Arial, sans-serif" font-size="16" font-weight="500" text-anchor="middle" fill="#374151">HealthTech</text>
+          <line x1="200" y1="380" x2="1000" y2="380" stroke="#e5e7eb" stroke-width="2"/>
+          <text x="600" y="420" font-family="Arial, sans-serif" font-size="20" font-weight="600" text-anchor="middle" fill="#9ca3af">CredoKaizen Portfolio</text>
+        </svg>
