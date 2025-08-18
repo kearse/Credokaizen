@@ -11,8 +11,7 @@ You will deploy a folder of pre-built static assets generated from the project:
 | Layer | Runtime on Shared Host | Where It Happens |
 |-------|------------------------|------------------|
 | Next.js (App Router) | Already baked into static HTML/JS | Locally / CI before upload |
-| Prisma + MySQL (optional source DB) | NOT on host (unless you have a managed DB) | Local / CI only |
-| Data Export (JSON) | Bundled into final build | Local / CI |
+| Company Data (JSON) | Bundled into final build | Local / CI |
 | Company Pages (/companies + /companies/[slug]) | Static HTML | Host |
 | OpenGraph Images (/og/*.png) | Static PNGs | Host |
 | Sitemap & robots.txt | Static files | Host |
@@ -33,19 +32,14 @@ Most SiteGround / GoDaddy shared plans → Mode A.
 
 ---
 
-## 3. Quick Start (If You Already Have Node Locally)
+## 3. Quick Start (JSON Workflow)
 
 ```bash
 git clone https://github.com/YOUR_FORK/Credokaizen.git
 cd Credokaizen
 
-# Optional: Set up local DB only if you need to change data via Prisma
-cp .env.example .env.local
-# Edit DATABASE_URL if using MySQL locally (or skip if editing JSON directly)
-
 npm install
-npm run prisma:push   # Only if using a DB
-npm run seed          # Optional sample data
+# Edit src/data/companies.json to add/modify companies
 npm run export        # Builds static site into /out
 ```
 
@@ -59,20 +53,20 @@ Done.
 
 1. Install Node.js ≥ 18 (LTS recommended).
 2. Fork or clone the repository.
-3. (Optional) Install MySQL locally if you want to manage structured data via Prisma:
-   - Create DB: `CREATE DATABASE credokaizen_dev CHARACTER SET utf8mb4;`
-   - Set `.env.local` with `DATABASE_URL="mysql://user:pass@localhost:3306/credokaizen_dev"`
-4. Run:
+3. Run:
    ```bash
    npm install
-   npm run prisma:push
-   npm run seed
    ```
-5. Generate static data & dev server:
+4. Edit company data:
    ```bash
-   npm run dev
+   npm run dev    # Start development server
+   # Edit src/data/companies.json to add/modify companies
+   npm run validate:data  # Validate your JSON changes
    ```
-6. Modify or add companies/products (see Section 7).
+5. Generate static site:
+   ```bash
+   npm run export
+   ```
 
 ---
 
@@ -84,9 +78,9 @@ npm run export
 ```
 
 Behind the scenes this runs (order may vary based on your package.json):
-1. `generate:data` – Exports DB snapshot to `src/data/companies.json`.
+1. `validate:data` – Validates `src/data/companies.json` format and required fields.
 2. `generate:sitemap` – Creates `public/sitemap.xml`.
-3. `generate:og` – Generates OpenGraph PNGs into `public/og/`.
+3. `generate:og` – Generates OpenGraph images into `public/og/`.
 4. `next build` – Builds production assets.
 5. `next export` – Writes static site to `/out`.
 
@@ -110,29 +104,18 @@ Upload ALL files from `/out` (index.html + subfolders). Do not include the `out`
 
 ## 7. Updating Company / Product Data
 
-You have two approaches:
-
-### Approach A: Edit JSON Directly
+### JSON Workflow (Recommended)
 1. Open `src/data/companies.json`.
 2. Add / modify company objects.
-3. Save and run `npm run export`.
+3. Validate your changes: `npm run validate:data`
+4. Save and run `npm run export`.
 
-Pros: Simple, no DB required.
-Cons: No schema validation beyond TypeScript hints.
-
-### Approach B: Prisma + MySQL Workflow
-1. Edit `prisma/schema.prisma` if you need new fields.
-2. `npm run prisma:push` to sync local DB.
-3. Add/update seed logic in `scripts/seed.ts` or manually use a DB client.
-4. Run:
-   ```bash
-   npm run seed
-   npm run generate:data
-   npm run export
-   ```
-5. Commit the updated `src/data/companies.json`.
-
-In both approaches, the export ensures per-company pages and OG images are updated.
+**Features:**
+- Schema validation ensures data quality
+- No database required
+- Simple file-based workflow
+- Built-in validation for required fields (id, slug, name, status)
+- Warnings for missing optional fields (tagline, shortDescription)
 
 ---
 
@@ -241,8 +224,6 @@ jobs:
           node-version: 18
       - run: npm ci
       - run: npm run export
-        env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }} # Only if using Prisma data generation
       - name: Upload via FTP
         uses: SamKirkland/FTP-Deploy-Action@v4
         with:
@@ -253,7 +234,7 @@ jobs:
           server-dir: public_html
 ```
 
-Add secrets in GitHub repo settings. If you manually edit JSON and don’t use Prisma, you can omit `DATABASE_URL`.
+Add secrets in GitHub repo settings for FTP deployment.
 
 ---
 
@@ -327,8 +308,8 @@ If you need a secure editor interface:
 Q: Can I host this on GitHub Pages instead?  
 A: Yes—`/out` can be pushed to a `gh-pages` branch. Adjust sitemap domain accordingly.
 
-Q: Do I need Prisma if I just edit JSON?  
-A: No. Remove Prisma-related dependencies & scripts if you want a leaner setup.
+Q: How do I validate my company data?  
+A: Run `npm run validate:data` to check for required fields, unique IDs/slugs, and valid status values.
 
 Q: Can I add a blog?  
 A: Yes—add MDX files under `content/` and build them into static pages at export time.
