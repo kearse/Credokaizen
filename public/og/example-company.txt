@@ -1,0 +1,3 @@
+OG Image for Example Company
+Tagline: Building the future of technology
+Description: A sample company for demonstration purposes

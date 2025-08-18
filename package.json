@@ -6,17 +6,20 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "validate:data": "npx ts-node scripts/validate-data.ts",
+    "generate:sitemap": "npx ts-node scripts/generate-sitemap.ts",
+    "generate:og": "npx ts-node scripts/generate-og.ts",
+    "export": "npm run validate:data && npm run generate:sitemap && npm run generate:og && next build && next export"
   },
   "dependencies": {
     "clsx": "^2.1.1",
     "framer-motion": "^11.1.7",
     "next": "14.2.3",
     "react": "^18",
-    "react-dom": "^18"
-    /* If you decide to add DB driver directly:
-    , "mysql2": "^3.9.7"
-    */
+    "react-dom": "^18",
+    "satori": "^0.10.14",
+    "@resvg/resvg-js": "^2.6.0"
   },
   "devDependencies": {
     "@types/node": "^20",
@@ -26,6 +29,7 @@
     "eslint-config-next": "14.2.3",
     "postcss": "^8",
     "tailwindcss": "^3.4.1",
-    "typescript": "^5"
+    "typescript": "^5",
+    "ts-node": "^10.9.2"
   }
 }

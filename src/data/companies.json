@@ -1,0 +1,28 @@
+[
+  {
+    "id": 1,
+    "slug": "example-company",
+    "name": "Example Company",
+    "tagline": "Building the future of technology",
+    "shortDescription": "A sample company for demonstration purposes",
+    "longDescription": "Example Company is a demonstration company used to showcase the portfolio structure and capabilities.",
+    "status": "ACTIVE",
+    "websiteUrl": "https://example.com",
+    "logoUrl": "/logos/example.svg",
+    "primaryColor": "#3B82F6",
+    "products": []
+  },
+  {
+    "id": 2,
+    "slug": "innovation-labs",
+    "name": "Innovation Labs",
+    "tagline": "Pioneering tomorrow's solutions",
+    "shortDescription": "Research and development focused company",
+    "longDescription": "Innovation Labs focuses on cutting-edge research and development in emerging technologies.",
+    "status": "INCUBATION",
+    "websiteUrl": "https://innovationlabs.example.com",
+    "logoUrl": "/logos/innovation.svg",
+    "primaryColor": "#10B981",
+    "products": []
+  }
+]
