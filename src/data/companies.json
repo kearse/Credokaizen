@@ -1,0 +1,42 @@
+[
+  {
+    "id": 1,
+    "slug": "acme-solutions",
+    "name": "Acme Solutions",
+    "tagline": "Innovative software for modern businesses.",
+    "shortDescription": "Building enterprise software solutions that scale.",
+    "longDescription": "Acme Solutions specializes in creating enterprise-grade software that helps businesses streamline their operations and scale efficiently. Our team of experienced developers and consultants work closely with clients to deliver custom solutions that meet their unique needs.",
+    "status": "ACTIVE",
+    "websiteUrl": "https://example.com/acme",
+    "logoUrl": "/logos/acme.svg",
+    "primaryColor": "#3B82F6",
+    "products": [
+      {
+        "id": 1,
+        "name": "Acme CRM",
+        "description": "Customer relationship management platform",
+        "url": "https://example.com/acme-crm"
+      }
+    ]
+  },
+  {
+    "id": 2,
+    "slug": "tech-ventures",
+    "name": "Tech Ventures",
+    "tagline": "Next-generation technology solutions.",
+    "shortDescription": "Developing cutting-edge tech products.",
+    "longDescription": "Tech Ventures is at the forefront of technological innovation, developing products that push the boundaries of what's possible. From AI-powered analytics to blockchain solutions, we're building the future of technology.",
+    "status": "INCUBATION",
+    "websiteUrl": "https://example.com/tech-ventures",
+    "logoUrl": "/logos/tech-ventures.svg",
+    "primaryColor": "#10B981",
+    "products": [
+      {
+        "id": 2,
+        "name": "AI Analytics Suite",
+        "description": "Advanced analytics powered by artificial intelligence",
+        "url": "https://example.com/ai-analytics"
+      }
+    ]
+  }
+]
