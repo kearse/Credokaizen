@@ -1,368 +1,285 @@
-# CredoKaizen Static Portfolio – Self Hosting Guide (SiteGround, GoDaddy, cPanel & Similar Shared Hosts)
+# Credokaizen (Static Site)
 
-This guide walks a non-Node hosting user (SiteGround, GoDaddy, Bluehost, Namecheap, generic cPanel) through deploying the CredoKaizen static-exported Next.js site and keeping it updated over time—even though the host does not run a live Node.js server.
+A lightweight, fully static Next.js site that lists companies (or similar entities) defined in a single JSON file.  
+Optimized for super-simple deployment on shared hosting (e.g. SiteGround) where you only need to upload static files (HTML/CSS/JS/images).
 
----
-
-## 1. What You’re Deploying
-
-You will deploy a folder of pre-built static assets generated from the project:
-
-| Layer | Runtime on Shared Host | Where It Happens |
-|-------|------------------------|------------------|
-| Next.js (App Router) | Already baked into static HTML/JS | Locally / CI before upload |
-| Prisma + MySQL (optional source DB) | NOT on host (unless you have a managed DB) | Local / CI only |
-| Data Export (JSON) | Bundled into final build | Local / CI |
-| Company Pages (/companies + /companies/[slug]) | Static HTML | Host |
-| OpenGraph Images (/og/*.png) | Static PNGs | Host |
-| Sitemap & robots.txt | Static files | Host |
-
-No server-side code executes after you upload. Everything interactive is client-side JavaScript.
+You do NOT need a database, Node running in production, or serverless functions.  
+You build locally, then upload the generated files.
 
 ---
 
-## 2. Deployment Modes (Choose One)
+## 1. What You Get
 
-| Mode | When to Use | Steps |
-|------|-------------|-------|
-| A. Pure Static (recommended) | Shared hosting w/out Node support | Build locally → upload /out |
-| B. Hybrid (Separate Admin) | You want dynamic editing elsewhere | Static site on shared host + admin app on Vercel |
-| C. Full Node Hosting | ONLY if host provides full Node runtime (rare on shared) | Run `next start` (not covered here in depth) |
-
-Most SiteGround / GoDaddy shared plans → Mode A.
+- Static pages for each company (generated from `src/data/companies.json`)
+- A homepage / listing (assuming existing Next.js pages/components already in the repo)
+- A generated `sitemap.xml`
+- Placeholder Open Graph (OG) artifacts (easy to later replace with real images)
+- Simple validation script to catch bad data early
 
 ---
 
-## 3. Quick Start (If You Already Have Node Locally)
+## 2. Requirements (Local Machine Only)
+
+Install locally (your shared host does NOT have to run these):
+
+- Node.js 20.x or 22.x (LTS preferred)
+- npm (comes with Node)
+- A text editor (VS Code recommended)
+- (Optional) Git if you want version control (recommended)
+
+SiteGround (shared hosting) will ONLY host the exported static files (in `out/`), not run Node.
+
+---
+
+## 3. One-Time Local Setup
+
+Clone or download the repository:
 
 ```bash
-git clone https://github.com/YOUR_FORK/Credokaizen.git
-cd Credokaizen
-
-# Optional: Set up local DB only if you need to change data via Prisma
-cp .env.example .env.local
-# Edit DATABASE_URL if using MySQL locally (or skip if editing JSON directly)
-
+git clone https://github.com/your-user/credokaizen.git
+cd credokaizen
 npm install
-npm run prisma:push   # Only if using a DB
-npm run seed          # Optional sample data
-npm run export        # Builds static site into /out
 ```
 
-Upload the contents of `out/` (NOT the folder itself) into your hosting document root (often `public_html/`).
-
-Done.
+(If you downloaded a ZIP, just unzip and `cd` into the folder, then run `npm install`.)
 
 ---
 
-## 4. Local Environment Setup (Detailed)
+## 4. Project Structure (Key Parts)
 
-1. Install Node.js ≥ 18 (LTS recommended).
-2. Fork or clone the repository.
-3. (Optional) Install MySQL locally if you want to manage structured data via Prisma:
-   - Create DB: `CREATE DATABASE credokaizen_dev CHARACTER SET utf8mb4;`
-   - Set `.env.local` with `DATABASE_URL="mysql://user:pass@localhost:3306/credokaizen_dev"`
-4. Run:
-   ```bash
-   npm install
-   npm run prisma:push
-   npm run seed
-   ```
-5. Generate static data & dev server:
-   ```bash
-   npm run dev
-   ```
-6. Modify or add companies/products (see Section 7).
+```
+src/
+  data/
+    companies.json        # Your content
+scripts/
+  validate-data.cjs       # Data quality checks
+  generate-sitemap.cjs
+  generate-og.cjs
+public/                   # Static assets served as-is
+out/                      # (Created after export) FINAL FILES TO UPLOAD
+README.md
+package.json
+```
 
 ---
 
-## 5. Build & Export for Hosting
+## 5. Editing Content
 
-The single canonical command:
+Open `src/data/companies.json`.  
+It is a JSON array; each object example:
+
+```json
+{
+  "id": 1,
+  "slug": "acme-corp",
+  "name": "Acme Corp",
+  "status": "ACTIVE",
+  "tagline": "Making rockets safer",
+  "shortDescription": "We build reliable rocket components.",
+  "website": "https://acme.example"
+}
+```
+
+Rules (enforced by validator):
+- id: unique non-negative integer
+- slug: unique, non-empty string (used in page URL)
+- name: required
+- status: one of ACTIVE, INCUBATION, RETIRED, EXITED
+Warnings only (optional fields): tagline, shortDescription, website
+
+(Optional) JSON Schema assistance: if `companies.schema.json` exists in repo, VS Code will auto-suggest if you add at top of `companies.json`:
+```json
+{
+  "$schema": "../companies.schema.json",
+  ...
+}
+```
+(Or configure in your editor settings.) If you don’t see suggestions, that’s okay—schema is optional.
+
+---
+
+## 6. Validating Data
+
+Run:
+```bash
+npm run validate:data
+```
+
+Outcome:
+- On errors: process exits with code 1 and you must fix them.
+- On warnings: shows warnings but continues.
+
+---
+
+## 7. Generating Sitemap & OG Placeholders (Individually)
+
+```bash
+npm run generate:sitemap
+npm run generate:og
+```
+
+These are normally executed automatically in the export pipeline (next section).
+
+---
+
+## 8. Build & Export (Create Static Site)
+
+This single command does validation → sitemap → OG placeholders → Next.js build → export:
+
 ```bash
 npm run export
 ```
 
-Behind the scenes this runs (order may vary based on your package.json):
-1. `generate:data` – Exports DB snapshot to `src/data/companies.json`.
-2. `generate:sitemap` – Creates `public/sitemap.xml`.
-3. `generate:og` – Generates OpenGraph PNGs into `public/og/`.
-4. `next build` – Builds production assets.
-5. `next export` – Writes static site to `/out`.
-
-Contents of `/out` are safe to host anywhere that serves static files.
+Result: `out/` directory created (or refreshed).  
+Everything inside `out/` is what you deploy to SiteGround (or any static host).
 
 ---
 
-## 6. Where to Upload Files on Common Hosts
+## 9. Deploy to SiteGround (Shared Hosting)
 
-| Host | Target Directory | Notes |
-|------|------------------|-------|
-| SiteGround | `public_html/` | Replace existing index.* if overwriting old site |
-| GoDaddy (cPanel) | `public_html/` | Use File Manager or SFTP |
-| Namecheap | `public_html/` | Same pattern |
-| Plesk | `httpdocs/` | Equivalent root |
-| DirectAdmin | `domains/yourdomain.com/public_html/` | Varies |
+You have two easy deployment options:
 
-Upload ALL files from `/out` (index.html + subfolders). Do not include the `out` folder itself unless you want URLs like `/out/index.html`.
+### Option A: Manual Upload (Fastest to get running)
 
----
+1. Run locally: `npm run export`
+2. Open the `out/` folder.
+3. Connect to SiteGround via:
+   - Site Tools -> File Manager, OR
+   - SFTP (recommended for many files)
+4. Decide where site lives:
+   - Root domain: upload contents of `out/` into `public_html/`
+   - Subdomain (e.g. `new.example.com`): upload into its document root folder (SiteGround creates a separate folder for the subdomain)
+   - Subdirectory (e.g. `example.com/credokaizen`): create `public_html/credokaizen/` and upload there (see “Subdirectory Note” below).
+5. Ensure an `index.html` is at that document root.
+6. Load in browser. Done.
 
-## 7. Updating Company / Product Data
+Subdirectory Note: If you deploy under a sub-path (like `/credokaizen`), you may need to configure Next.js `basePath` and/or `assetPrefix` before exporting. If you only deploy at root or on a subdomain, no extra config is needed. (Ask later if you want a sub-path guide.)
 
-You have two approaches:
+### Option B: Git (SiteGround Git Tool)
 
-### Approach A: Edit JSON Directly
-1. Open `src/data/companies.json`.
-2. Add / modify company objects.
-3. Save and run `npm run export`.
+1. Initialize a Git repo on SiteGround (Site Tools -> Devs -> Git).
+2. Push your repository there.
+3. IMPORTANT: You still need the compiled static files. Easiest pattern:
+   - Keep a separate branch that includes the built `out/` folder committed (e.g. `deploy` branch).
+   - Locally: `npm run export`, then commit the `out/` contents to `deploy`.
+   - Push `deploy` -> SiteGround deploys those static files.
+4. Alternatively set up a GitHub Action that builds and then rsyncs or SFTPs only `out/` (ask if you want a workflow file).
 
-Pros: Simple, no DB required.
-Cons: No schema validation beyond TypeScript hints.
-
-### Approach B: Prisma + MySQL Workflow
-1. Edit `prisma/schema.prisma` if you need new fields.
-2. `npm run prisma:push` to sync local DB.
-3. Add/update seed logic in `scripts/seed.ts` or manually use a DB client.
-4. Run:
-   ```bash
-   npm run seed
-   npm run generate:data
-   npm run export
-   ```
-5. Commit the updated `src/data/companies.json`.
-
-In both approaches, the export ensures per-company pages and OG images are updated.
+For most users, Option A (manual upload) is simplest.
 
 ---
 
-## 8. Adding a New Company (JSON Example)
+## 10. Updating the Site (Content Change Workflow)
 
-```json
-{
-  "id": 3,
-  "slug": "phoenix-labs",
-  "name": "Phoenix Labs",
-  "tagline": "Reinventing compliance automation.",
-  "shortDescription": "Lightweight compliance orchestration.",
-  "longDescription": "Phoenix Labs builds tools...",
-  "status": "INCUBATION",
-  "websiteUrl": "https://example.com/phoenix",
-  "logoUrl": "/logos/phoenix.svg",
-  "primaryColor": "#F97316",
-  "products": []
-}
-```
-
-Important:
-- `slug` must be unique.
-- `status` must be one of: ACTIVE, INCUBATION, RETIRED, EXITED.
-- Add a matching logo into `public/logos/` (optional).
+1. Edit `src/data/companies.json`
+2. Run `npm run validate:data`
+3. Run `npm run export`
+4. Upload new `out/` contents (you can delete old files first to avoid stale assets—EXCEPT keep any custom files you manually added directly on the server)
+5. Refresh browser (hard refresh / clear CDN cache if using SG Optimizer caching)
 
 ---
 
-## 9. Regenerating OpenGraph Images
+## 11. Environment Variables (Optional)
 
-The script scans `src/data/companies.json` and outputs PNGs:
-```
-public/og/{slug}.png
-```
+`SITE_URL` (used in sitemap generation).  
+Set before export:
 
-To force regeneration:
 ```bash
-rm -rf public/og/*.png
-npm run generate:og
+export SITE_URL="https://yourdomain.com"  # macOS/Linux
+# or on Windows PowerShell:
+$env:SITE_URL="https://yourdomain.com"
+npm run export
 ```
 
-If a company has no tagline/shortDescription, script uses fallback text.
+If not set, sitemap falls back to `https://example.com` (remember to change it!).
 
 ---
 
-## 10. SEO Artifacts
+## 12. Open Graph (OG) Placeholders
 
-| File | Purpose | Generated? |
-|------|---------|------------|
-| `/sitemap.xml` | Search engine discovery | Yes (script) |
-| `/robots.txt` | Crawl directives + sitemap link | Committed static |
-| `/og/*.png` | Rich link previews | Generated |
-| JSON-LD (Organization + Products) | Injected in `<head>` | In layout |
-| JSON-LD (Company detail) | Per page script tag | In `[slug]/page.tsx` |
-
-Make sure your live domain:
-- Is referenced correctly in `robots.txt` and sitemap (edit if different from `https://credokaizen.com`).
-- Has HTTPS (see Section 13).
+Current `generate-og` script writes simple placeholder files in `public/og/`.  
+You can later replace with real image generation (e.g. using `satori` + `@resvg/resvg-js`).  
+If you already have real OG image generation in code, keep using it—placeholders are safe.
 
 ---
 
-## 11. Manual Upload Methods
+## 13. Common Tasks Cheat Sheet
 
-### A. cPanel / Site Tools File Manager
-1. Compress local `out/` contents into a zip (NOT the folder container).
-2. Upload via File Manager.
-3. Extract in `public_html/`.
-
-### B. SFTP
-Use a client (FileZilla / Cyberduck):
-- Host: Provided by your provider
-- User / Pass: Your SFTP credentials
-- Remote path: `public_html`
-- Upload all files inside `out/`.
-
-### C. Git (If Host Supports)
-Some hosts allow pulling from Git:
-1. Push the built `out/` (or create a separate `deploy` branch containing only `/out` artifacts).
-2. Use a post-receive hook to copy files:
-   ```bash
-   # pseudo-hook content
-   rm -rf ~/public_html/*
-   cp -R out/* ~/public_html/
-   ```
+| Task | Command |
+|------|---------|
+| Install deps | npm install |
+| Validate data | npm run validate:data |
+| Generate sitemap only | npm run generate:sitemap |
+| Generate OG placeholders only | npm run generate:og |
+| Full static export | npm run export |
+| Clean build (optional) | rm -rf .next out |
 
 ---
 
-## 12. Automating Deployment (Optional CI Outline)
+## 14. Troubleshooting
 
-You can use GitHub Actions + FTP deploy:
-
-```yaml
-# .github/workflows/deploy.yml
-name: Deploy Static Site
-on:
-  push:
-    branches: [ main ]
-
-jobs:
-  build-deploy:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 18
-      - run: npm ci
-      - run: npm run export
-        env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }} # Only if using Prisma data generation
-      - name: Upload via FTP
-        uses: SamKirkland/FTP-Deploy-Action@v4
-        with:
-          server: ${{ secrets.FTP_HOST }}
-          username: ${{ secrets.FTP_USER }}
-          password: ${{ secrets.FTP_PASS }}
-          local-dir: out
-          server-dir: public_html
-```
-
-Add secrets in GitHub repo settings. If you manually edit JSON and don’t use Prisma, you can omit `DATABASE_URL`.
-
----
-
-## 13. Domain + HTTPS Checklist
-
-1. Point DNS A record (and optionally AAAA for IPv6) to hosting IP.
-2. Add CNAME for `www` → root domain (or vice versa).
-3. Enable free SSL (Let’s Encrypt) in your hosting control panel.
-4. Force HTTPS:
-   - Most hosts: toggle “HTTPS Enforce”.
-   - Or create `.htaccess` in root:
-     ```
-     RewriteEngine On
-     RewriteCond %{HTTPS} !=on
-     RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
-     ```
-
----
-
-## 14. Updating the Site
-
-Workflow each time:
-
-1. Pull latest repo changes.
-2. Add/edit companies (JSON or DB+export).
-3. Run `npm run export`.
-4. Upload new `/out` contents (overwrite existing).
-5. Clear host’s cache (if CDN/SG Optimizer enabled).
-
-No need to delete older files unless assets were removed.
-
----
-
-## 15. Optional: Separate Admin (Hybrid Mode)
-
-If you need a secure editor interface:
-1. Deploy an “admin” Next.js app on Vercel with next-auth and direct DB access.
-2. Admin writes to the primary DB (e.g., PlanetScale / Railway).
-3. A webhook (or manual trigger) runs the static export pipeline in GitHub Actions, then deploys fresh static assets to SiteGround.
-4. Public site stays static and fast; editing experience remains dynamic elsewhere.
-
----
-
-## 16. Security Guidelines
-
-| Area | Recommendation |
-|------|---------------|
-| Secrets | Never commit real DB creds; only placeholders in `.env.example`. |
-| DB Users | Grant least privilege (SELECT/INSERT/UPDATE only if using external DB). |
-| Static Data | Sanitize sensitive internal notes before export. |
-| OG Images | Don’t render confidential content; they become public. |
-| GitHub Secrets | Restrict access; rotate if compromised. |
-
----
-
-## 17. Troubleshooting
-
-| Symptom | Cause | Fix |
+| Problem | Cause | Fix |
 |---------|-------|-----|
-| Blank page after upload | Uploaded parent `out/` folder instead of contents | Move contents up one level |
-| 404 on /companies/... | Export not rerun after data change | Run `npm run export` again |
-| Old OG image in previews | Social cache | Use Facebook Debugger / Twitter Card Validator to refresh |
-| Wrong domain in sitemap | Hard-coded base URL | Edit sitemap script or environment base constant |
-| Styles not loading | Some hosts block `_next` directory or changed path | Ensure `_next/` folder is preserved exactly |
-| Missing logos | Logo path incorrect | Place files in `public/logos/` and reference `/logos/name.svg` |
+| Validation fails | Duplicate id/slug or missing required fields | Fix JSON then re-run |
+| EROFS or read-only errors | (Previously with tsx) Not applicable now | Already solved by plain JS scripts |
+| 404 on company pages after upload | Possibly missing files or uploaded to wrong folder | Confirm `out/companies/<slug>/index.html` exists and is in correct path |
+| Wrong domain in sitemap | `SITE_URL` not set | Export again with correct env var |
+| Stale content after redeploy | Browser or SG cache | Clear cache / hard reload |
+| No styles or broken assets | Partial upload or wrong relative paths | Re-upload entire `out/` folder contents |
 
 ---
 
-## 18. FAQ
+## 15. Optional Enhancements (Ask if You Want Them)
 
-Q: Can I host this on GitHub Pages instead?  
-A: Yes—`/out` can be pushed to a `gh-pages` branch. Adjust sitemap domain accordingly.
-
-Q: Do I need Prisma if I just edit JSON?  
-A: No. Remove Prisma-related dependencies & scripts if you want a leaner setup.
-
-Q: Can I add a blog?  
-A: Yes—add MDX files under `content/` and build them into static pages at export time.
-
-Q: How do I change site colors/theme?  
-A: Update CSS variables in `src/app/globals.css` and re-export.
+- GitHub Action to auto-build & deploy via SFTP
+- Real OG image rendering
+- CI validation on pull requests
+- Search / filtering UI for companies
+- Incremental content editing UI (non-tech contributor dashboard)
 
 ---
 
-## 19. Minimal “I Just Want It Live” Checklist
+## 16. FAQs
 
-1. Clone repo.
-2. (Optional) Edit `src/data/companies.json`.
-3. `npm install`
-4. `npm run export`
-5. Upload `/out/*` to `public_html/`
-6. Verify: visit domain → check /companies and a detail page.
-7. Test OG: share a company URL on Slack/Twitter.
+Q: Can I edit files directly on SiteGround?  
+A: You can, but you’ll lose changes when you next upload a fresh `out/`. Always treat `out/` as disposable build output.
 
-Done.
+Q: Do I need to upload the `scripts/` folder or source code?  
+A: No. Only the contents of `out/` are required for the live site.
 
----
-
-## 20. Support / Next Enhancements
-
-Potential next steps:
-- Add blog & MDX pipeline
-- Generate canonical tags + RSS feed
-- Add dark/light toggle (prefers-color-scheme)
-- Automate deployment with GitHub Actions
-- Migrate images to a CDN (Cloudflare R2 / Bunny / S3)
+Q: Can I use a Windows machine?  
+A: Yes. Use PowerShell or Git Bash. Replace `rm -rf` with manual deletion or `rmdir /s /q`.
 
 ---
 
-Made for incremental improvement. If you encounter edge cases or want an automated CI deploy config tailored to your hosting provider, integrate Section 12 and adapt credentials.
+## 17. Quick Start (Copy/Paste)
+
+```bash
+git clone https://github.com/your-user/credokaizen.git
+cd credokaizen
+npm install
+# Edit src/data/companies.json as needed
+npm run validate:data
+export SITE_URL="https://yourdomain.com"    # (set base URL, optional but recommended)
+npm run export
+# Upload ./out/** to your SiteGround public_html/
+```
+
+Done!
+
+---
+
+## 18. License
+
+(If you have a license file, reference it here. Otherwise decide a license—MIT is common.)
+
+---
+
+## 19. Need More Help?
+
+Just open an issue or ask for:
+- Deployment automation
+- Subdirectory path configuration
+- Improving performance & lighthouse metrics
 
 Happy shipping! 🚀
