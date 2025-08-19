@@ -1,0 +1,10 @@
+OpenGraph Image Placeholder for: Mobile Companion App
+Slug: mobile-app
+Status: EXITED
+Tagline: On-the-go portfolio access
+Description: No description provided
+
+Generated: 2025-08-19T04:14:34.769Z
+
+Note: This is a placeholder file. Replace with actual OG image generation
+when implementing the full image rendering pipeline with satori/resvg.

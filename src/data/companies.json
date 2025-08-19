@@ -1,0 +1,32 @@
+[
+  {
+    "id": 1,
+    "slug": "credokaizen-core",
+    "name": "CredoKaizen Core Platform",
+    "status": "ACTIVE",
+    "tagline": "Enterprise portfolio management solution",
+    "shortDescription": "A comprehensive platform for managing digital portfolios and business processes."
+  },
+  {
+    "id": 2,
+    "slug": "analytics-pro",
+    "name": "Analytics Pro",
+    "status": "INCUBATION",
+    "tagline": "Advanced data insights platform",
+    "shortDescription": "Real-time analytics and reporting for modern businesses."
+  },
+  {
+    "id": 3,
+    "slug": "legacy-system",
+    "name": "Legacy System",
+    "status": "RETIRED",
+    "shortDescription": "Former internal tool for project management."
+  },
+  {
+    "id": 4,
+    "slug": "mobile-app",
+    "name": "Mobile Companion App",
+    "status": "EXITED",
+    "tagline": "On-the-go portfolio access"
+  }
+]

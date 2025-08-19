@@ -1,0 +1,10 @@
+OpenGraph Image Placeholder for: Legacy System
+Slug: legacy-system
+Status: RETIRED
+Tagline: No tagline provided
+Description: Former internal tool for project management.
+
+Generated: 2025-08-19T04:14:34.769Z
+
+Note: This is a placeholder file. Replace with actual OG image generation
+when implementing the full image rendering pipeline with satori/resvg.

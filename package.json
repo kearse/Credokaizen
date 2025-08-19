@@ -1,26 +1,25 @@
 {
   "name": "credokaizen",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "private": true,
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "validate:data": "tsx scripts/validate-data.ts",
-    "generate:sitemap": "tsx scripts/generate-sitemap.ts",
-    "generate:og": "tsx scripts/generate-og.ts",
+    "validate:data": "node scripts/validate-data.cjs",
+    "generate:sitemap": "node scripts/generate-sitemap.cjs",
+    "generate:og": "node scripts/generate-og.cjs",
     "export": "npm run validate:data && npm run generate:sitemap && npm run generate:og && next build && next export"
   },
   "dependencies": {
+    "@resvg/resvg-js": "^2.6.2",
     "next": "14.2.5",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "satori": "^0.10.12",
-    "@resvg/resvg-js": "^2.6.2"
+    "satori": "^0.10.12"
   },
   "devDependencies": {
-    "typescript": "^5.4.0",
-    "@types/react": "^18.2.74",
     "@types/node": "^20.11.30",
-    "tsx": "^4.7.0"
+    "@types/react": "^18.2.74",
+    "typescript": "^5.4.0"
   }
 }

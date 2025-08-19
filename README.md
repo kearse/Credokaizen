@@ -84,11 +84,13 @@ npm run export
 ```
 
 Behind the scenes this runs (order may vary based on your package.json):
-1. `generate:data` – Exports DB snapshot to `src/data/companies.json`.
+1. `validate:data` – Validates company data structure and requirements.
 2. `generate:sitemap` – Creates `public/sitemap.xml`.
 3. `generate:og` – Generates OpenGraph PNGs into `public/og/`.
 4. `next build` – Builds production assets.
 5. `next export` – Writes static site to `/out`.
+
+All helper scripts use plain Node.js (CommonJS) for maximum compatibility with read-only filesystem environments like shared hosting.
 
 Contents of `/out` are safe to host anywhere that serves static files.
 
@@ -117,8 +119,8 @@ You have two approaches:
 2. Add / modify company objects.
 3. Save and run `npm run export`.
 
-Pros: Simple, no DB required.
-Cons: No schema validation beyond TypeScript hints.
+Pros: Simple, no DB required. Helper scripts use plain Node.js for maximum host compatibility.
+Cons: No schema validation beyond built-in data validation script.
 
 ### Approach B: Prisma + MySQL Workflow
 1. Edit `prisma/schema.prisma` if you need new fields.
@@ -319,6 +321,7 @@ If you need a secure editor interface:
 | Wrong domain in sitemap | Hard-coded base URL | Edit sitemap script or environment base constant |
 | Styles not loading | Some hosts block `_next` directory or changed path | Ensure `_next/` folder is preserved exactly |
 | Missing logos | Logo path incorrect | Place files in `public/logos/` and reference `/logos/name.svg` |
+| Script execution fails on shared host | Read-only filesystem restrictions | Helper scripts use plain Node.js to avoid runtime transpilation issues |
 
 ---
 
