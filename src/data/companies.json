@@ -1,0 +1,29 @@
+[
+  {
+    "id": 1,
+    "slug": "acme-corp",
+    "name": "Acme Corp",
+    "status": "ACTIVE",
+    "tagline": "Making rockets safer",
+    "shortDescription": "We build reliable rocket components for the aerospace industry.",
+    "website": "https://acme.example"
+  },
+  {
+    "id": 2,
+    "slug": "beta-dynamics",
+    "name": "Beta Dynamics",
+    "status": "INCUBATION",
+    "tagline": "Future of AI automation",
+    "shortDescription": "Developing next-generation AI solutions for industrial automation.",
+    "website": "https://betadynamics.example"
+  },
+  {
+    "id": 3,
+    "slug": "gamma-tech",
+    "name": "Gamma Tech",
+    "status": "ACTIVE",
+    "tagline": "Sustainable energy solutions",
+    "shortDescription": "Clean energy technology for a sustainable future.",
+    "website": "https://gammatech.example"
+  }
+]

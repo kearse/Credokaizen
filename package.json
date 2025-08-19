@@ -5,10 +5,10 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "validate:data": "tsx scripts/validate-data.ts",
-    "generate:sitemap": "tsx scripts/generate-sitemap.ts",
-    "generate:og": "tsx scripts/generate-og.ts",
-    "export": "npm run validate:data && npm run generate:sitemap && npm run generate:og && next build && next export"
+    "validate:data": "node scripts/validate-data.cjs",
+    "generate:sitemap": "node scripts/generate-sitemap.cjs",
+    "generate:og": "node scripts/generate-og.cjs",
+    "export": "npm run validate:data && npm run generate:sitemap && npm run generate:og && next build"
   },
   "dependencies": {
     "next": "14.2.5",
@@ -20,7 +20,9 @@
   "devDependencies": {
     "typescript": "^5.4.0",
     "@types/react": "^18.2.74",
+    "@types/react-dom": "^18.3.0",
     "@types/node": "^20.11.30",
-    "tsx": "^4.7.0"
+    "tailwindcss": "^3.4.0",
+    "autoprefixer": "^10.4.0"
   }
 }
